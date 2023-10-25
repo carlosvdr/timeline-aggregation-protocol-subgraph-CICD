@@ -42,7 +42,7 @@ services:
       PGDATA: "/var/lib/postgresql/data"
       POSTGRES_INITDB_ARGS: "-E UTF8 --locale=C"
   anvil:
-    image: ghcr.io/foundry-rs/foundry:11.313
+    image: ghcr.io/foundry-rs/foundry:nightly-602460eb99e1645eab970bacc5a6d01368a07457
     ports:
      - '8545:8545'
     command:
