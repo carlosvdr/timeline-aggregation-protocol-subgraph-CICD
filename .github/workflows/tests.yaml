@@ -31,6 +31,13 @@ jobs:
       - name: Start Docker Compose
         run: docker-compose up -d
         working-directory: ./tests
+      - name: Checking graph-node availability
+        uses: nick-fields/retry@v2
+        with:
+          max_attempts: 3
+          retry_on: error
+          timeout_seconds: 5
+          command: ping 127.0.0.1:8030 ; echo $?
       - name: Installing python requirements
         run: pip install -r requirements.txt
         working-directory: ./tests
