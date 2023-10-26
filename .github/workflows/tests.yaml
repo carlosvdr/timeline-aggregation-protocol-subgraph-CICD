@@ -31,6 +31,12 @@ jobs:
       - name: Start Docker Compose
         run: docker-compose up -d
         working-directory: ./tests
+      - name: CHeck 0 for graph node
+        run: ping 127.0.0.1:8030 ; echo $?
+      - name: CHeck 1 for graph node
+        run: echo > /dev/tcp/127.0.0.1/8030
+      - name: CHeck 2 for graph node
+        run: ping 127.0.0.1:8030 ; echo $?
       - name: Checking graph-node availability
         uses: nick-fields/retry@v2
         with:
