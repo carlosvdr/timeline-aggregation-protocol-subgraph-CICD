@@ -6,7 +6,6 @@ RECEIVER=0x22d491Bde2303f2f43325b2108D26f1eAbA1e32b
 
 # Obtain curren dir
 current_dir=$(pwd)
-
 echo "Step 1: Run graph contracts"
 cd $current_dir/contracts
 yarn
@@ -15,7 +14,7 @@ FULL_CMD_LOG="$(yes | yarn deploy-localhost --auto-mine)"
 echo "Obtaining Graph address token"
 GRAPH_TOKEN=$(jq '."1337".GraphToken.address' addresses.json -r)
 
-
+FULL_TAP_CONTRACT_PATH = $current_dir/timeline-aggregation-protocol-contracts
 command cd $current_dir/timeline-aggregation-protocol-contracts
 command yarn
 command forge install
@@ -42,15 +41,21 @@ ESCROW_AD=$(echo $ESCROW_VAR | jq -r '.deployedTo')
 echo "Escrow address: $ESCROW_AD"
 
 cd $current_dir
+cd ..
 
 echo "Deploying locally the subgraph"
-yq ".dataSources[].source.address=\"$ESCROW_AD\"" ../subgraph.yaml -i
+yq ".dataSources[].source.address=\"$ESCROW_AD\"" subgraph.yaml -i
 yarn codegen
 yarn build
 yarn create-local
 yarn deploy-local
 
+cd $current_dir
 echo "Running escrow contract calls"
-python contract_calls.py "$ESCROW_AD" "$TAP_VERIFIER_AD" "$GRAPH_TOKEN" "$ISTAKING_AD"
+python local_contract_calls.py "$ESCROW_AD" "$TAP_VERIFIER_AD" "$GRAPH_TOKEN" "$ISTAKING_AD"
+
+if [ $? -ne 0 ]; then
+  exit 1  
+fi
 
 
